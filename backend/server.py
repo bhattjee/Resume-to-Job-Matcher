@@ -453,6 +453,9 @@ async def upload_complete(payload: UploadCompleteRequest):
 async def list_jobs():
     await ensure_seed_jobs()
     jobs = await db.jobs.find().to_list(1000)
+    # Remove Mongo _id to avoid JSON serialization issues
+    for j in jobs:
+        j.pop("_id", None)
     return jobs
 
 
