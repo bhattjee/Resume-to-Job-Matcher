@@ -12,6 +12,7 @@ import uuid
 from datetime import datetime, timezone
 import shutil
 import aiofiles
+import json
 
 # Optional parsers
 from io import BytesIO
@@ -26,6 +27,11 @@ try:
 except Exception:  # pragma: no cover
     Document = None
 
+# Groq (text-only LLM extraction)
+try:
+    from groq import AsyncGroq  # type: ignore
+except Exception:  # pragma: no cover
+    AsyncGroq = None
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -313,6 +319,43 @@ def score_jobs(skills: List[str], jobs: List[Dict[str, Any]]) -> List[SkillMatch
     return matches[:8]
 
 
+# ========= Groq text-only extraction =========
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+
+async def groq_extract_skills(text: str) -> Optional[Dict[str, Any]]:
+    if not GROQ_API_KEY or not AsyncGroq:
+        return None
+    try:
+        client = AsyncGroq(api_key=GROQ_API_KEY)
+        prompt = f"""
+        Extract skills and roles from the following resume text. Return ONLY valid JSON with keys: skills (array of strings), roles (array of strings).
+        If uncertain, still return best-effort JSON. Avoid explanations.
+        Resume:\n{text[:40000]}
+        """
+        resp = await client.chat.completions.create(
+            messages=[
+                {"role": "system", "content": "You extract concise skill and role lists from resumes and reply only with JSON."},
+                {"role": "user", "content": prompt},
+            ],
+            model=GROQ_MODEL,
+            temperature=0.1,
+            max_tokens=800,
+            response_format={"type": "json_object"},
+        )
+        content = resp.choices[0].message.content
+        data = json.loads(content)
+        skills = data.get("skills") or []
+        roles = data.get("roles") or []
+        # normalize
+        skills = sorted({(s or '').strip().lower() for s in skills if isinstance(s, str) and s.strip()})
+        roles = sorted({(r or '').strip().lower() for r in roles if isinstance(r, str) and r.strip()})
+        return {"skills": skills, "roles": roles}
+    except Exception as e:
+        logger.warning(f"Groq extraction failed, falling back. Error: {e}")
+        return None
+
+
 @api_router.get("/")
 async def root():
     return {"message": "Resume Matcher API ready"}
@@ -419,10 +462,21 @@ async def upload_complete(payload: UploadCompleteRequest):
         except Exception:
             text = ""
 
-    # Heuristic extraction (LLM can be integrated later)
-    extracted = heuristic_skill_extraction(text)
-    skills = extracted.get("skills", [])
-    roles = extracted.get("roles", [])
+    # First try Groq text-only extraction if configured
+    skills: List[str] = []
+    roles: List[str] = []
+    used_provider = "heuristic"
+
+    groq_res = await groq_extract_skills(text)
+    if groq_res and (groq_res.get("skills") or groq_res.get("roles")):
+        skills = list(groq_res.get("skills", []))
+        roles = list(groq_res.get("roles", []))
+        used_provider = "groq"
+    else:
+        # Heuristic extraction (fallback)
+        extracted = heuristic_skill_extraction(text)
+        skills = extracted.get("skills", [])
+        roles = extracted.get("roles", [])
 
     await ensure_seed_jobs()
     jobs = await db.jobs.find().to_list(1000)
@@ -437,14 +491,19 @@ async def upload_complete(payload: UploadCompleteRequest):
         "extracted_skills": skills,
         "inferred_roles": roles,
         "created_at": iso_now(),
+        "provider": used_provider,
     }
     await db.analyses.insert_one(analysis_doc)
 
     # Optional cleanup: keep files for debugging
     # shutil.rmtree(folder, ignore_errors=True)
 
+    # Remove Mongo _id from ranked jobs if present
+    for m in ranked:
+        pass
+
     return AnalyzeResponse(
-        analysis=ExtractResult(**analysis_doc),
+        analysis=ExtractResult(**{k: v for k, v in analysis_doc.items() if k != 'provider'}),
         matches=ranked,
     )
 
