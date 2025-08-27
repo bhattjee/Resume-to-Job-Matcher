@@ -121,15 +121,18 @@
 ##         -comment: "Fixed missing aiofiles dependency and tested complete upload flow. All endpoints working: /api/upload/init returns uploadId, /api/upload/chunk accepts binary data correctly, /api/upload/complete returns proper AnalyzeResponse with analysis and job matches. Skill extraction working with heuristic parsing (extracted 12 skills from test resume). Job matching algorithm functioning with percentage scores. Edge case testing confirmed 400 error for invalid uploadId."
 ##   - task: "Groq text-only AI extraction"
 ##     implemented: true
-##     working: "NA"
+##     working: true
 ##     file: "/app/backend/server.py"
 ##     stuck_count: 0
 ##     priority: "high"
-##     needs_retesting: true
+##     needs_retesting: false
 ##     status_history:
 ##         -working: "NA"
 ##         -agent: "main"
 ##         -comment: "Integrated Groq Async client (text-only) to extract skills/roles from parsed resume text; falls back to heuristic on failure. Key expected as GROQ_API_KEY in backend/.env."
+##         -working: true
+##         -agent: "testing"
+##         -comment: "Groq text-only extraction fully functional. Verified GROQ_API_KEY is set and model llama-3.3-70b-versatile is working. Successfully tested with simple text mentioning Python, React, SQL - extracted 8/8 expected skills including AI-enriched results. Groq API calls confirmed in logs (HTTP 200 responses to api.groq.com). Heuristic fallback working when PDF parsing fails. Tiny payload test passed with 7 skills extracted from 154 characters. Provider field correctly excluded from response as designed."
 ##   - task: "Jobs listing"
 ##     implemented: true
 ##     working: true
