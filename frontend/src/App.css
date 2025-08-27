@@ -1,34 +1,83 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+/* Base styles for a clean, centered app */
+.App {
+  min-height: 100vh;
+  background: radial-gradient(1200px 600px at 80% -10%, rgba(56, 189, 248, 0.15), transparent),
+              radial-gradient(1000px 600px at 0% 0%, rgba(168, 85, 247, 0.12), transparent),
+              #0b0b0c;
+  color: #e5e7eb;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem 5rem 1rem;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.card {
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
 }
 
-.App-link {
-    color: #61dafb;
+.dropzone {
+  border: 1.5px dashed rgba(148, 163, 184, 0.5);
+  border-radius: 14px;
+  padding: 2rem;
+  background: rgba(2, 6, 23, 0.35);
+  transition: all 180ms ease;
+}
+.dropzone.dragover {
+  border-color: rgba(56, 189, 248, 0.9);
+  background: rgba(3, 7, 18, 0.55);
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.btn {
+  background: linear-gradient(135deg, #22d3ee, #8b5cf6);
+  border: none;
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
 }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.progress {
+  height: 10px;
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+.progressbar {
+  height: 10px;
+  background: linear-gradient(90deg, #22d3ee, #8b5cf6);
+  transition: width 150ms ease;
+}
+
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.job-card {
+  background: rgba(2, 6, 23, 0.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(56, 189, 248, 0.15);
+  color: #67e8f9;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 10px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+  margin-right: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.subtitle { color: #9ca3af; }
