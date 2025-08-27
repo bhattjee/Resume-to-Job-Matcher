@@ -155,22 +155,33 @@
 ##     file: "/app/frontend/src/App.js"
 ##     stuck_count: 0
 ##     priority: "high"
-##     needs_retesting: false
+##     needs_retesting: true
 ##     status_history:
 ##         -working: "NA"
 ##         -agent: "main"
 ##         -comment: "Built drag-and-drop upload, chunked POSTs to /api/upload/*, shows analysis results and job matches."
+##   - task: "End-to-end UI: upload → analyze → see matches"
+##     implemented: true
+##     working: "NA"
+##     file: "/app/frontend/src/App.js"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: true
+##     status_history:
+##         -working: "NA"
+##         -agent: "main"
+##         -comment: "Need automated UI test to simulate selecting a .pdf/.docx, clicking Upload & Analyze, observing progress, and verifying Top Matches cards appear with match % and badges."
 
 ## metadata:
 ##   created_by: "main_agent"
 ##   version: "1.0"
 ##   test_sequence: 2
-##   run_ui: false
+##   run_ui: true
 
 ## test_plan:
 ##   current_focus:
+##     - "Frontend E2E upload + analyze flow"
 ##     - "Backend upload + analysis flow"
-##     - "Jobs listing"
 ##   stuck_tasks:
 ##     - "None"
 ##   test_all: false
@@ -178,7 +189,7 @@
 
 ## agent_communication:
 ##   -agent: "main"
-##   -message: "Please test backend endpoints: /api/upload/init -> /api/upload/chunk (2-3 chunks of small text) -> /api/upload/complete and validate AnalyzeResponse schema. Also test /api/jobs. No auth needed."
+##   -message: "Frontend automated test: open https://career-finder-17.preview.emergentagent.com, verify heading, click dropzone to open file selector, set input[type=file] with a generated test resume file (resume.pdf) containing text with skills: Python, React, SQL, FastAPI, AWS. Click 'Upload & Analyze'. Wait for status texts ('Initializing upload', 'Uploading', 'Analyzing') and progress reaching 100%. Verify 'Top Matches' renders, at least 1 job card exists, a match % badge shows, and some skills badges appear (e.g., python/react). Capture screenshots before upload and after results. Report any console errors."
 ##   -agent: "testing"
 ##   -message: "Backend testing completed successfully. Fixed missing aiofiles dependency that was causing 502 errors. All 4 test suites passed: 1) API root endpoint returns correct message, 2) Complete upload flow works with chunked uploads and returns proper analysis with skill extraction and job matching, 3) Edge case testing confirms proper error handling, 4) Jobs endpoint returns seeded data with correct structure. Resume analysis extracted 12 skills from test data and matched against 10 seeded jobs with percentage scores. Ready for production use."
 ##   -agent: "main"
