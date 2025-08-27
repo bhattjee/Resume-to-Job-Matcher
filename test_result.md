@@ -119,6 +119,17 @@
 ##         -working: true
 ##         -agent: "testing"
 ##         -comment: "Fixed missing aiofiles dependency and tested complete upload flow. All endpoints working: /api/upload/init returns uploadId, /api/upload/chunk accepts binary data correctly, /api/upload/complete returns proper AnalyzeResponse with analysis and job matches. Skill extraction working with heuristic parsing (extracted 12 skills from test resume). Job matching algorithm functioning with percentage scores. Edge case testing confirmed 400 error for invalid uploadId."
+##   - task: "Groq text-only AI extraction"
+##     implemented: true
+##     working: "NA"
+##     file: "/app/backend/server.py"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: true
+##     status_history:
+##         -working: "NA"
+##         -agent: "main"
+##         -comment: "Integrated Groq Async client (text-only) to extract skills/roles from parsed resume text; falls back to heuristic on failure. Key expected as GROQ_API_KEY in backend/.env."
 ##   - task: "Jobs listing"
 ##     implemented: true
 ##     working: true
