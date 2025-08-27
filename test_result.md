@@ -107,26 +107,32 @@
 ## backend:
 ##   - task: "Chunked upload + resume analysis + mock job matching"
 ##     implemented: true
-##     working: "NA"
+##     working: true
 ##     file: "/app/backend/server.py"
 ##     stuck_count: 0
 ##     priority: "high"
-##     needs_retesting: true
+##     needs_retesting: false
 ##     status_history:
 ##         -working: "NA"
 ##         -agent: "main"
 ##         -comment: "Implemented /api/upload/init, /api/upload/chunk, /api/upload/complete with PDF/DOCX parsing via pypdf and python-docx. Added heuristic skill extraction, seeded mock jobs, and matching with scores."
+##         -working: true
+##         -agent: "testing"
+##         -comment: "Fixed missing aiofiles dependency and tested complete upload flow. All endpoints working: /api/upload/init returns uploadId, /api/upload/chunk accepts binary data correctly, /api/upload/complete returns proper AnalyzeResponse with analysis and job matches. Skill extraction working with heuristic parsing (extracted 12 skills from test resume). Job matching algorithm functioning with percentage scores. Edge case testing confirmed 400 error for invalid uploadId."
 ##   - task: "Jobs listing"
 ##     implemented: true
-##     working: "NA"
+##     working: true
 ##     file: "/app/backend/server.py"
 ##     stuck_count: 0
 ##     priority: "medium"
-##     needs_retesting: true
+##     needs_retesting: false
 ##     status_history:
 ##         -working: "NA"
 ##         -agent: "main"
 ##         -comment: "Added /api/jobs endpoint returning seeded jobs sans Mongo _id."
+##         -working: true
+##         -agent: "testing"
+##         -comment: "Jobs endpoint fully functional. Returns 10 seeded jobs with proper UUID ids, no Mongo _id fields present. All required fields (id, title, company, required_skills) present. Job seeding works correctly when database is empty."
 
 ## frontend:
 ##   - task: "File upload UI with chunking and progress"
