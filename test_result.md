@@ -101,3 +101,61 @@
 #====================================================================================================
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
+
+## user_problem_statement: "Build a resume analyzer that extracts skills/qualifications and suggests relevant job opportunities from a dataset using file upload only (PDF/DOCX)."
+
+## backend:
+##   - task: "Chunked upload + resume analysis + mock job matching"
+##     implemented: true
+##     working: "NA"
+##     file: "/app/backend/server.py"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: true
+##     status_history:
+##         -working: "NA"
+##         -agent: "main"
+##         -comment: "Implemented /api/upload/init, /api/upload/chunk, /api/upload/complete with PDF/DOCX parsing via pypdf and python-docx. Added heuristic skill extraction, seeded mock jobs, and matching with scores."
+##   - task: "Jobs listing"
+##     implemented: true
+##     working: "NA"
+##     file: "/app/backend/server.py"
+##     stuck_count: 0
+##     priority: "medium"
+##     needs_retesting: true
+##     status_history:
+##         -working: "NA"
+##         -agent: "main"
+##         -comment: "Added /api/jobs endpoint returning seeded jobs sans Mongo _id."
+
+## frontend:
+##   - task: "File upload UI with chunking and progress"
+##     implemented: true
+##     working: "NA"
+##     file: "/app/frontend/src/App.js"
+##     stuck_count: 0
+##     priority: "high"
+##     needs_retesting: false
+##     status_history:
+##         -working: "NA"
+##         -agent: "main"
+##         -comment: "Built drag-and-drop upload, chunked POSTs to /api/upload/*, shows analysis results and job matches."
+
+## metadata:
+##   created_by: "main_agent"
+##   version: "1.0"
+##   test_sequence: 1
+##   run_ui: false
+
+## test_plan:
+##   current_focus:
+##     - "Backend upload + analysis flow"
+##     - "Jobs listing"
+##   stuck_tasks:
+##     - "None"
+##   test_all: false
+##   test_priority: "high_first"
+
+## agent_communication:
+##   -agent: "main"
+##   -message: "Please test backend endpoints: /api/upload/init -> /api/upload/chunk (2-3 chunks of small text) -> /api/upload/complete and validate AnalyzeResponse schema. Also test /api/jobs. No auth needed."
